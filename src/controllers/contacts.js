@@ -29,45 +29,33 @@ export const getContact = async (req, res) => {
   });
 };
 
-export const createContact = async (req, res, next) => {
-  try {
-    const { name, phoneNumber, email, isFavourite, contactType } = req.body;
-    const contactData = { name, phoneNumber, email, isFavourite, contactType };
-    const newContact = await createCont(contactData);
-    res.status(201).json({
-      status: 201,
-      message: 'Successfully created a contact!',
-      data: newContact,
-    });
-  } catch (err) {
-    next(err);
-  }
+export const createContact = async (req, res) => {
+  const { name, phoneNumber, email, isFavourite, contactType } = req.body;
+  const contactData = { name, phoneNumber, email, isFavourite, contactType };
+  const newContact = await createCont(contactData);
+  res.status(201).json({
+    status: 201,
+    message: 'Successfully created a contact!',
+    data: newContact,
+  });
 };
 
-export const updateContact = async (req, res, next) => {
-  try {
-    const updatedContact = await updateCont(req.params.contactId, req.body);
-    if (!updatedContact) {
-      throw httpErrors(404, 'Contact not found');
-    }
-    res.json({
-      status: 200,
-      message: 'Successfully patched a contact!',
-      data: updatedContact,
-    });
-  } catch (err) {
-    next(err);
+export const updateContact = async (req, res) => {
+  const updatedContact = await updateCont(req.params.contactId, req.body);
+  if (!updatedContact) {
+    throw httpErrors(404, 'Contact not found');
   }
+  res.json({
+    status: 200,
+    message: 'Successfully patched a contact!',
+    data: updatedContact,
+  });
 };
 
-export const deleteContact = async (req, res, next) => {
-  try {
-    const deletedContact = await deleteCont(req.params.contactId);
-    if (!deletedContact) {
-      throw httpErrors(404, 'Contact not found');
-    }
-    res.status(204).send();
-  } catch (err) {
-    next(err);
+export const deleteContact = async (req, res) => {
+  const deletedContact = await deleteCont(req.params.contactId);
+  if (!deletedContact) {
+    throw httpErrors(404, 'Contact not found');
   }
+  res.status(204).send();
 };
