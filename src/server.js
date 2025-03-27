@@ -1,16 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import pino from 'pino-http';
-import {
-  getContacts,
-  getContact,
-  createContact,
-  updateContact,
-  deleteContact,
-} from './controllers/contacts.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
-import { Router } from 'express';
 import ContactsRouter from './routers/contacts.js';
 
 const setupServer = () => {
