@@ -1,4 +1,5 @@
 import httpErrors from 'http-errors';
+import createHttpError from 'http-errors';
 import {
   getAllContacts,
   getContactById,
@@ -19,6 +20,7 @@ export const getContacts = async (req, res) => {
     perPage,
     sortBy,
     sortOrder,
+    userId: req.user.id,
   });
   res.status(200).json({
     status: 200,
@@ -33,6 +35,11 @@ export const getContact = async (req, res) => {
   if (!contact) {
     throw httpErrors(404, 'Contact not found');
   }
+
+  if (contact.userId.toString() !== req.user.id.toString()) {
+    throw new createHttpError.NotFound('Student not found');
+  }
+
   res.status(200).json({
     status: 200,
     message: `Successfully found contact with id ${contactId}!`,
@@ -41,8 +48,14 @@ export const getContact = async (req, res) => {
 };
 
 export const createContact = async (req, res) => {
+  // const contact = {
+  //   ...req.body,
+  //   userId: req.user.id,
+  // };
   const { name, phoneNumber, email, isFavourite, contactType } = req.body;
+  console.log(req.user);
   const contactData = { name, phoneNumber, email, isFavourite, contactType };
+  console.log(contactData);
   const newContact = await createCont(contactData);
   res.status(201).json({
     status: 201,
