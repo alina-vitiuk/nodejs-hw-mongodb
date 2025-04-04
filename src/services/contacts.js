@@ -29,8 +29,8 @@ export const getAllContacts = async ({
   };
 };
 
-export const getContactById = async (contactId) => {
-  return await Contact.findById(contactId);
+export const getContactById = async (contactId, userId) => {
+  return await Contact.findOne({ _id: contactId, userId: userId });
 };
 
 export const createCont = async (contactData) => {
@@ -39,16 +39,21 @@ export const createCont = async (contactData) => {
   return newContact;
 };
 
-export const updateCont = async (contactId, updatedData) => {
-  const updatedContact = await Contact.findByIdAndUpdate(
-    contactId,
+export const updateCont = async (contactId, userId, updatedData) => {
+  const updatedContact = await Contact.findOneAndUpdate(
+    { _id: contactId, user: userId },
     updatedData,
     { new: true },
   );
   return updatedContact;
 };
 
-export const deleteCont = async (contactId) => {
-  const deletedContact = await Contact.findByIdAndDelete(contactId);
+export const deleteCont = async (contactId, userId) => {
+  const deletedContact = await Contact.findOneAndDelete({
+    _id: contactId,
+    userId: userId,
+  });
   return deletedContact;
 };
+
+// {     "email": "nana@gmail.com",     "password": "1111111" }

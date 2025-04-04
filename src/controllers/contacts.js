@@ -31,7 +31,7 @@ export const getContacts = async (req, res) => {
 
 export const getContact = async (req, res) => {
   const { contactId } = req.params;
-  const contact = await getContactById(contactId);
+  const contact = await getContactById(contactId, req.user.id);
   if (!contact) {
     throw httpErrors(404, 'Contact not found');
   }
@@ -48,14 +48,10 @@ export const getContact = async (req, res) => {
 };
 
 export const createContact = async (req, res) => {
-  // const contact = {
-  //   ...req.body,
-  //   userId: req.user.id,
-  // };
-  const { name, phoneNumber, email, isFavourite, contactType } = req.body;
-  console.log(req.user);
-  const contactData = { name, phoneNumber, email, isFavourite, contactType };
-  console.log(contactData);
+  const contactData = {
+    ...req.body,
+    userId: req.user.id,
+  };
   const newContact = await createCont(contactData);
   res.status(201).json({
     status: 201,
@@ -65,7 +61,11 @@ export const createContact = async (req, res) => {
 };
 
 export const updateContact = async (req, res) => {
-  const updatedContact = await updateCont(req.params.contactId, req.body);
+  const updatedContact = await updateCont(
+    req.params.contactId,
+    req.body,
+    req.user.id,
+  );
   if (!updatedContact) {
     throw httpErrors(404, 'Contact not found');
   }
@@ -77,7 +77,7 @@ export const updateContact = async (req, res) => {
 };
 
 export const deleteContact = async (req, res) => {
-  const deletedContact = await deleteCont(req.params.contactId);
+  const deletedContact = await deleteCont(req.params.contactId, req.user.id);
   if (!deletedContact) {
     throw httpErrors(404, 'Contact not found');
   }
