@@ -39,9 +39,9 @@ export const createCont = async (contactData) => {
   return newContact;
 };
 
-export const updateCont = async (contactId, userId, updatedData) => {
+export const updateCont = async (contactId, updatedData, userId) => {
   const updatedContact = await Contact.findOneAndUpdate(
-    { _id: contactId, user: userId },
+    { _id: contactId, userId: userId },
     updatedData,
     { new: true },
   );
@@ -55,5 +55,3 @@ export const deleteCont = async (contactId, userId) => {
   });
   return deletedContact;
 };
-
-// {     "email": "nana@gmail.com",     "password": "1111111" }

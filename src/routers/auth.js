@@ -9,7 +9,6 @@ import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { registerSchema, loginSchema } from '../validation/auth.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import cookieParser from 'cookie-parser';
-import auth from '../middlewares/auth.js';
 
 const router = express.Router();
 
@@ -31,7 +30,7 @@ router.use(
 
 router.post('/logout', ctrlWrapper(logoutController));
 
-router.post('/refresh', auth, ctrlWrapper(refreshController));
+router.post('/refresh', ctrlWrapper(refreshController));
 
 router.use(cookieParser());
 
