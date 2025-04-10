@@ -55,6 +55,7 @@ export const getContact = async (req, res) => {
 
 export const createContact = async (req, res) => {
   let photo = null;
+
   if (process.env.UPLOAD_TO_CLOUDINARY === 'true') {
     const result = await uploadToCloudinary(req.file.path);
     photo = result.secure_url;
