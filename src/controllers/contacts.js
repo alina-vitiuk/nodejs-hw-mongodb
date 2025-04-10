@@ -64,7 +64,6 @@ export const createContact = async (req, res) => {
       req.file.path,
       path.resolve('src', 'uploads', req.file.filename),
     );
-
     photo = `http://localhost:3000/uploads/${req.file.filename}`;
   }
 
