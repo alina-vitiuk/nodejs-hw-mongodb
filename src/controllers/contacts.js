@@ -1,3 +1,6 @@
+import * as fs from 'node:fs/promises';
+import path from 'path';
+
 import httpErrors from 'http-errors';
 import createHttpError from 'http-errors';
 import {
@@ -9,7 +12,10 @@ import {
 } from '../services/contacts.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
+import { uploadToCloudinary } from '../utils/cloudinary.js';
+import dotenv from 'dotenv';
 
+dotenv.config();
 export const getContacts = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
 
@@ -48,10 +54,25 @@ export const getContact = async (req, res) => {
 };
 
 export const createContact = async (req, res) => {
+  let photo = null;
+  if (process.env.UPLOAD_TO_CLOUDINARY === 'true') {
+    const result = await uploadToCloudinary(req.file.path);
+    photo = result.secure_url;
+  } else {
+    await fs.rename(
+      req.file.path,
+      path.resolve('src', 'uploads', req.file.filename),
+    );
+
+    photo = `http://localhost:3000/uploads/${req.file.filename}`;
+  }
+
   const contactData = {
     ...req.body,
     userId: req.user.id,
+    photo,
   };
+
   const newContact = await createCont(contactData);
   res.status(201).json({
     status: 201,
@@ -61,11 +82,28 @@ export const createContact = async (req, res) => {
 };
 
 export const updateContact = async (req, res) => {
+  let photo = null;
+
+  if (req.file) {
+    if (process.env.UPLOAD_TO_CLOUDINARY === 'true') {
+      const result = await uploadToCloudinary(req.file.path);
+      photo = result.secure_url;
+    } else {
+      await fs.rename(
+        req.file.path,
+        path.resolve('src', 'uploads', req.file.filename),
+      );
+      photo = `http://localhost:3000/uploads/${req.file.filename}`;
+    }
+
+    req.body.photo = photo;
+  }
   const updatedContact = await updateCont(
     req.params.contactId,
     req.body,
     req.user.id,
   );
+
   if (!updatedContact) {
     throw httpErrors(404, 'Contact not found');
   }

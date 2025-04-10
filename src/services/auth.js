@@ -1,9 +1,22 @@
+import * as fs from 'node:fs';
+import path from 'node:path';
+
 import crypto from 'node:crypto';
 import bcrypt from 'bcrypt';
 import createHttpError from 'http-errors';
 
+import jwt from 'jsonwebtoken';
+import handlebars from 'handlebars';
+
 import User from '../db/models/User.js';
 import Session from '../db/models/Session.js';
+
+import { sendEmail } from '../utils/sendEmail.js';
+
+const RESET_PASSWORD_TEMPLATE = fs.readFileSync(
+  path.resolve('src/templates/reset-password.hbs'),
+  { encoding: 'UTF-8' },
+);
 
 export async function registerUser(payload) {
   const user = await User.findOne({ email: payload.email });
@@ -73,4 +86,50 @@ export async function refreshSession(sessionId, refreshToken) {
     accessTokenValidUntil: new Date(Date.now() + 10 * 60 * 1000),
     refreshTokenValidUntil: new Date(Date.now() + 24 * 60 * 60 * 1000),
   });
+}
+
+export async function requestResetPassword(email) {
+  const user = await User.findOne({ email });
+
+  if (user === null) {
+    throw createHttpError.NotFound('User not found');
+  }
+
+  const resetToken = jwt.sign(
+    { sub: user._id, name: user.name },
+    getEnvVar('JWT_SECRET'),
+    {
+      expiresIn: '15m',
+    },
+  );
+
+  const template = handlebars.compile(RESET_PASSWORD_TEMPLATE);
+
+  await sendEmail(email, 'Reset your password', template({ resetToken }));
+}
+
+export async function resetPassword(token, newPassword) {
+  try {
+    const decoded = jwt.verify(token, getEnvVar('JWT_SECRET'));
+
+    const user = await User.findById(decoded.sub);
+
+    if (user === null) {
+      throw createHttpError.NotFound('User not found');
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await User.findByIdAndUpdate(user._id, { password: hashedPassword });
+  } catch (error) {
+    if (error.name === 'JsonWebTokenError') {
+      throw createHttpError.Unauthorized('Token is unauthorized');
+    }
+
+    if (error.name === 'TokenExpiredError') {
+      throw createHttpError.Unauthorized('Token is expired');
+    }
+
+    throw error;
+  }
 }
