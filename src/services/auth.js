@@ -12,9 +12,12 @@ import User from '../db/models/User.js';
 import Session from '../db/models/Session.js';
 
 import { sendEmail } from '../utils/sendEmail.js';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const RESET_PASSWORD_TEMPLATE = fs.readFileSync(
-  path.resolve('src/templates/reset-password.hbs'),
+  path.resolve('src/templates/reset-pwd.hbs'),
   { encoding: 'UTF-8' },
 );
 
@@ -97,7 +100,7 @@ export async function requestResetPassword(email) {
 
   const resetToken = jwt.sign(
     { sub: user._id, name: user.name },
-    getEnvVar('JWT_SECRET'),
+    process.env.JWT_SECRET,
     {
       expiresIn: '15m',
     },
@@ -110,7 +113,7 @@ export async function requestResetPassword(email) {
 
 export async function resetPassword(token, newPassword) {
   try {
-    const decoded = jwt.verify(token, getEnvVar('JWT_SECRET'));
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     const user = await User.findById(decoded.sub);
 
@@ -132,4 +135,31 @@ export async function resetPassword(token, newPassword) {
 
     throw error;
   }
+}
+
+export async function loginOrRegister(email, name) {
+  let user = await User.findOne({ email });
+
+  if (user === null) {
+    const password = await bcrypt.hash(
+      crypto.randomBytes(30).toString('base64'),
+      10,
+    );
+
+    user = await User.create({
+      email,
+      name,
+      password,
+    });
+  }
+
+  await Session.deleteOne({ userId: user._id });
+
+  return Session.create({
+    userId: user._id,
+    accessToken: crypto.randomBytes(30).toString('base64'),
+    refreshToken: crypto.randomBytes(30).toString('base64'),
+    accessTokenValidUntil: new Date(Date.now() + 150 * 60 * 1000),
+    refreshTokenValidUntil: new Date(Date.now() + 24 * 60 * 60 * 1000),
+  });
 }
