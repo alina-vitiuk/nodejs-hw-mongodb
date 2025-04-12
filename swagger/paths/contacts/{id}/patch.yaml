@@ -1,0 +1,56 @@
+tags:
+  - Contacts
+summary: Update contact by id
+operationId: updateContact
+description: Update contact by id
+security:
+  - bearerAuth: []
+parameters:
+  - in: path
+    name: id
+    required: true
+    schema:
+      type: string
+      example: 67eec4c00c73bfc979baedbc
+responses:
+  '200':
+    description: Delete contact by id
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - status
+          - message
+          - data
+        properties:
+          status:
+            type: integer
+            example: 200
+          message:
+            type: string
+            example: Successfully patched a contact!
+          data:
+            $ref: ../../../components/schemas/updateContact.yaml
+  '400':
+    description: Invalid input data
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+          properties:
+            status:
+              type: integer
+              example: 400
+            message:
+              type: string
+              example: Invalid contact data
+  '401':
+    $ref: ../../../components/responses/401.yaml
+  '404':
+    $ref: ../../../components/responses/404.yaml
+  '500':
+    $ref: ../../../components/responses/500.yaml
