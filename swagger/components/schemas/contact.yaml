@@ -1,0 +1,50 @@
+type: object
+required:
+  - _id
+  - name
+  - phoneNumber
+  - contactType
+  - userId
+  - createdAt
+  - updatedAt
+properties:
+  _id:
+    type: string
+    description: Contact's id
+    example: 67eec4c00c73bfc979baedbc
+  name:
+    type: string
+    description: Contact's name
+    example: Amalia Nikols
+  phoneNumber:
+    type: number
+    description: Contact's number
+    example: +380000001999
+  email:
+    type: string
+    description: Contact's email
+    example: amalia@example.com
+  contactType:
+    type: string
+    description: Type of contact
+    enum: ['work', 'home', 'personal']
+    example: 'personal'
+  userId:
+    type: string
+    description: Contact's creator id
+    example: 67eec78c0f9979f4b1081e52
+  photo:
+    type: string
+    description: Contact's avatar url
+    example: https://res.cloudinary.com/dha4xvgfi/image/upload/v1743104601/snunhxlqvnd67budfeja.webp
+    default: null
+  createdAt:
+    type: string
+    format: date-time
+    description: Contact's created date
+    example: 2025-03-27T19:43:21.686+00:00
+  updateAt:
+    type: string
+    format: date-time
+    description: Contact's updated date
+    example: 2025-03-27T19:43:21.686+00:00
