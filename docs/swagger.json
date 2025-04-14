@@ -47,8 +47,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Delete contact by id"
+          "204": {
+            "description": "Contact successfully deleted"
           },
           "401": {
             "$ref": "#/components/responses/401"
@@ -58,28 +58,6 @@
           },
           "500": {
             "$ref": "#/components/responses/500"
-          },
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "status",
-                  "message",
-                  "data"
-                ],
-                "properties": {
-                  "status": {
-                    "type": "integer",
-                    "example": 200
-                  },
-                  "message": {
-                    "type": "string",
-                    "example": "Successfully deleted contact with id"
-                  }
-                }
-              }
-            }
           }
         }
       },
@@ -106,9 +84,77 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Contact's name",
+                    "example": "Amalia Nikols"
+                  },
+                  "phoneNumber": {
+                    "type": "string",
+                    "description": "Contact's phone number",
+                    "example": "+380000001999"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Contact's email",
+                    "example": "amalia@example.com"
+                  },
+                  "contactType": {
+                    "type": "string",
+                    "enum": [
+                      "work",
+                      "home",
+                      "personal"
+                    ],
+                    "description": "Type of contact",
+                    "example": "personal"
+                  },
+                  "photo": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Avatar image file"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "Get contact by id"
+            "description": "Get contact by id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully found contact with id"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/contact"
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
             "$ref": "#/components/responses/401"
@@ -139,31 +185,6 @@
           },
           "500": {
             "$ref": "#/components/responses/500"
-          },
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "status",
-                  "message",
-                  "data"
-                ],
-                "properties": {
-                  "status": {
-                    "type": "integer",
-                    "example": 200
-                  },
-                  "message": {
-                    "type": "string",
-                    "example": "Successfully found contact with id"
-                  },
-                  "data": {
-                    "$ref": "../../../components/schemas/contact.yaml"
-                  }
-                }
-              }
-            }
           }
         }
       },
@@ -171,9 +192,9 @@
         "tags": [
           "Contacts"
         ],
-        "summary": "Delete contact by id",
-        "operationId": "deleteContact",
-        "description": "Delete contact by id",
+        "summary": "Update contact by id",
+        "operationId": "updateContact",
+        "description": "Update contact by id",
         "security": [
           {
             "bearerAuth": []
@@ -190,14 +211,87 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Contact's name",
+                    "example": "Amalia Nikols"
+                  },
+                  "phoneNumber": {
+                    "type": "string",
+                    "description": "Contact's phone number",
+                    "example": "+380000001999"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Contact's email",
+                    "example": "amalia@example.com"
+                  },
+                  "isFavourite": {
+                    "type": "boolean",
+                    "description": "Indicates whether the contact is marked as favorite",
+                    "example": true
+                  },
+                  "contactType": {
+                    "type": "string",
+                    "enum": [
+                      "work",
+                      "home",
+                      "personal"
+                    ],
+                    "description": "Type of contact",
+                    "example": "personal"
+                  },
+                  "photo": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Avatar image file"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "Delete contact by id"
+            "description": "Update contact by id",
+            "content": {
+              "multipart/form-data": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully patched a contact!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Contact"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
             "description": "Invalid input data",
             "content": {
-              "application/json": {
+              "multipart/form-data": {
                 "schema": {
                   "type": "object",
                   "required": [
@@ -226,31 +320,6 @@
           },
           "500": {
             "$ref": "#/components/responses/500"
-          },
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "status",
-                  "message",
-                  "data"
-                ],
-                "properties": {
-                  "status": {
-                    "type": "integer",
-                    "example": 200
-                  },
-                  "message": {
-                    "type": "string",
-                    "example": "Successfully patched a contact!"
-                  },
-                  "data": {
-                    "$ref": "../../../components/schemas/updateContact.yaml"
-                  }
-                }
-              }
-            }
           }
         }
       }
@@ -285,7 +354,7 @@
                     "example": "Amalia Nikols"
                   },
                   "phoneNumber": {
-                    "type": "number",
+                    "type": "string",
                     "description": "Contact's number",
                     "example": 380000001999
                   },
@@ -293,6 +362,11 @@
                     "type": "string",
                     "description": "Contact's email",
                     "example": "amalia@example.com"
+                  },
+                  "isFavourite": {
+                    "type": "boolean",
+                    "description": "Indicates whether the contact is marked as favorite",
+                    "example": true
                   },
                   "contactType": {
                     "type": "string",
@@ -318,7 +392,7 @@
           "201": {
             "description": "Created a contact",
             "content": {
-              "application/json": {
+              "multipart/form-data": {
                 "schema": {
                   "type": "object",
                   "required": [
@@ -399,38 +473,6 @@
                 "desc"
               ],
               "example": "asc"
-            }
-          },
-          {
-            "in": "query",
-            "name": "minCreatedAt",
-            "schema": {
-              "type": "number",
-              "example": "2024-05-08T16:12:14.954203"
-            }
-          },
-          {
-            "in": "query",
-            "name": "maxCreatedAt",
-            "schema": {
-              "type": "number",
-              "example": "2025-03-21T09:00:31.724+00:00"
-            }
-          },
-          {
-            "in": "query",
-            "name": "phoneNumber",
-            "schema": {
-              "type": "number",
-              "example": 380000000009
-            }
-          },
-          {
-            "in": "query",
-            "name": "email",
-            "schema": {
-              "type": "string",
-              "example": "oleh1@example.com"
             }
           }
         ],
@@ -518,6 +560,152 @@
         "scheme": "bearer"
       }
     },
+    "schemas": {
+      "contact": {
+        "type": "object",
+        "required": [
+          "_id",
+          "name",
+          "phoneNumber",
+          "contactType",
+          "userId",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Contact's id",
+            "example": "67eec4c00c73bfc979baedbc"
+          },
+          "name": {
+            "type": "string",
+            "description": "Contact's name",
+            "example": "Amalia Nikols"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "Contact's number",
+            "example": 380000001999
+          },
+          "email": {
+            "type": "string",
+            "description": "Contact's email",
+            "example": "amalia@example.com"
+          },
+          "isFavourite": {
+            "type": "boolean",
+            "description": "Indicates whether the contact is marked as favorite",
+            "example": true
+          },
+          "contactType": {
+            "type": "string",
+            "description": "Type of contact",
+            "enum": [
+              "work",
+              "home",
+              "personal"
+            ],
+            "example": "personal"
+          },
+          "userId": {
+            "type": "string",
+            "description": "Contact's creator id",
+            "example": "67eec78c0f9979f4b1081e52"
+          },
+          "photo": {
+            "type": "string",
+            "description": "Contact's avatar url",
+            "example": "https://res.cloudinary.com/dha4xvgfi/image/upload/v1743104601/snunhxlqvnd67budfeja.webp",
+            "default": null
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Contact's created date",
+            "example": "2025-03-27T19:43:21.686+00:00"
+          },
+          "updateAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Contact's updated date",
+            "example": "2025-03-27T19:43:21.686+00:00"
+          }
+        }
+      },
+      "Contact": {
+        "type": "object",
+        "required": [
+          "_id",
+          "name",
+          "phoneNumber",
+          "contactType",
+          "userId",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Contact's id",
+            "example": "67eec4c00c73bfc979baedbc"
+          },
+          "name": {
+            "type": "string",
+            "description": "Contact's name",
+            "example": "Amalia Nikols"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "Contact's number",
+            "example": 380000001999
+          },
+          "email": {
+            "type": "string",
+            "description": "Contact's email",
+            "example": "amalia@example.com"
+          },
+          "isFavourite": {
+            "type": "boolean",
+            "description": "Indicates whether the contact is marked as favorite",
+            "example": true
+          },
+          "contactType": {
+            "type": "string",
+            "description": "Type of contact",
+            "enum": [
+              "work",
+              "home",
+              "personal"
+            ],
+            "example": "personal"
+          },
+          "userId": {
+            "type": "string",
+            "description": "Contact's creator id",
+            "example": "67eec78c0f9979f4b1081e52"
+          },
+          "photo": {
+            "type": "string",
+            "description": "Contact's avatar url",
+            "example": "https://res.cloudinary.com/dha4xvgfi/image/upload/v1743104601/snunhxlqvnd67budfeja.webp",
+            "default": null
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Contact's created date",
+            "example": "2025-03-27T19:43:21.686+00:00"
+          },
+          "updateAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Contact's updated date",
+            "example": "2025-03-27T19:43:21.686+00:00"
+          }
+        }
+      }
+    },
     "responses": {
       "401": {
         "description": "Unauthorized Error",
@@ -601,75 +789,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "schemas": {
-      "contact": {
-        "type": "object",
-        "required": [
-          "_id",
-          "name",
-          "phoneNumber",
-          "contactType",
-          "userId",
-          "createdAt",
-          "updatedAt"
-        ],
-        "properties": {
-          "_id": {
-            "type": "string",
-            "description": "Contact's id",
-            "example": "67eec4c00c73bfc979baedbc"
-          },
-          "name": {
-            "type": "string",
-            "description": "Contact's name",
-            "example": "Amalia Nikols"
-          },
-          "phoneNumber": {
-            "type": "number",
-            "description": "Contact's number",
-            "example": 380000001999
-          },
-          "email": {
-            "type": "string",
-            "description": "Contact's email",
-            "example": "amalia@example.com"
-          },
-          "contactType": {
-            "type": "string",
-            "description": "Type of contact",
-            "enum": [
-              "work",
-              "home",
-              "personal"
-            ],
-            "example": "personal"
-          },
-          "userId": {
-            "type": "string",
-            "description": "Contact's creator id",
-            "example": "67eec78c0f9979f4b1081e52"
-          },
-          "photo": {
-            "type": "string",
-            "description": "Contact's avatar url",
-            "example": "https://res.cloudinary.com/dha4xvgfi/image/upload/v1743104601/snunhxlqvnd67budfeja.webp",
-            "default": null
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Contact's created date",
-            "example": "2025-03-27T19:43:21.686+00:00"
-          },
-          "updateAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Contact's updated date",
-            "example": "2025-03-27T19:43:21.686+00:00"
           }
         }
       }

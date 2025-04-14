@@ -28,26 +28,6 @@ parameters:
       type: string
       enum: ['asc', 'desc']
       example: 'asc'
-  - in: query
-    name: minCreatedAt
-    schema:
-      type: number
-      example: 2024-05-08T16:12:14.954203
-  - in: query
-    name: maxCreatedAt
-    schema:
-      type: number
-      example: 2025-03-21T09:00:31.724+00:00
-  - in: query
-    name: phoneNumber
-    schema:
-      type: number
-      example: +380000000009
-  - in: query
-    name: email
-    schema:
-      type: string
-      example: oleh1@example.com
 responses:
   '200':
     description: Successfully found contacts!

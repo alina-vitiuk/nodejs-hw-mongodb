@@ -17,13 +17,17 @@ properties:
     description: Contact's name
     example: Amalia Nikols
   phoneNumber:
-    type: number
+    type: string
     description: Contact's number
     example: +380000001999
   email:
     type: string
     description: Contact's email
     example: amalia@example.com
+  isFavourite:
+    type: boolean
+    description: Indicates whether the contact is marked as favorite
+    example: true
   contactType:
     type: string
     description: Type of contact

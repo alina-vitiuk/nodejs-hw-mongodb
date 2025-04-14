@@ -12,30 +12,63 @@ parameters:
     schema:
       type: string
       example: 67eec4c00c73bfc979baedbc
-responses:
-  '200':
-    description: Delete contact by id
+requestBody:
+  required: true
   content:
-    application/json:
+    multipart/form-data:
       schema:
         type: object
-        required:
-          - status
-          - message
-          - data
         properties:
-          status:
-            type: integer
-            example: 200
-          message:
+          name:
             type: string
-            example: Successfully patched a contact!
-          data:
-            $ref: ../../../components/schemas/updateContact.yaml
+            description: Contact's name
+            example: Amalia Nikols
+          phoneNumber:
+            type: string
+            description: Contact's phone number
+            example: '+380000001999'
+          email:
+            type: string
+            format: email
+            description: Contact's email
+            example: amalia@example.com
+          isFavourite:
+            type: boolean
+            description: Indicates whether the contact is marked as favorite
+            example: true
+          contactType:
+            type: string
+            enum: [work, home, personal]
+            description: Type of contact
+            example: personal
+          photo:
+            type: string
+            format: binary
+            description: Avatar image file
+responses:
+  '200':
+    description: Update contact by id
+    content:
+      multipart/form-data:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Successfully patched a contact!
+            data:
+              $ref: ../../../components/schemas/Contact.yaml
   '400':
     description: Invalid input data
     content:
-      application/json:
+      multipart/form-data:
         schema:
           type: object
           required:
